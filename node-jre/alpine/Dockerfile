@@ -1,4 +1,4 @@
-FROM node:14-alpine3.16
+FROM node:14.21.2-alpine3.17
 
 ARG JAVA_VERSION=8.352.08.1
 

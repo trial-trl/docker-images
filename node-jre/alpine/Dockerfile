@@ -18,3 +18,5 @@ RUN wget -O /THIRD-PARTY-LICENSES-20200824.tar.gz https://corretto.aws/downloads
     
 ENV LANG C.UTF-8
 ENV JAVA_HOME=/usr/lib/jvm/default-jvm/jre
+
+RUN corepack enable

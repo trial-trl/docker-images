@@ -1,4 +1,4 @@
-FROM alvrme/alpine-android:android-33-jdk11
+FROM alvrme/alpine-android:android-33-jdk8
 
 ENV NODE_VERSION 14.21.2
 ENV YARN_VERSION 1.22.19
@@ -91,5 +91,7 @@ RUN apk add --no-cache --virtual .build-deps-yarn curl gnupg tar \
 
 # add basic tools missing in alpine
 RUN apk add --no-cache git
+
+RUN corepack enable
 
 CMD [ "which", "bash" ]

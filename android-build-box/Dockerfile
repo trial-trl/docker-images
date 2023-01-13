@@ -1,4 +1,4 @@
-FROM alvrme/alpine-android:android-33-jdk8
+FROM alvrme/alpine-android:android-33-jdk11
 
 ENV NODE_VERSION 14.21.2
 ENV YARN_VERSION 1.22.19
@@ -94,4 +94,20 @@ RUN apk add --no-cache git
 
 RUN corepack enable
 
-CMD [ "which", "bash" ]
+# add Wine
+ENV WINEDEBUG -all,err+all
+ENV WINEDLLOVERRIDES winemenubuilder.exe=d
+ENV WINEPREFIX /root/wine64
+ENV WINEARCH win64
+ENV DISPLAY :0
+RUN apk add --no-cache wine \
+    # config Wine
+    && winecfg \
+    # create symlink to default wine
+    && ln -sf /usr/bin/wine64 /usr/bin/wine \
+    # smoke test
+    && wine --version \
+    # cleanup
+    && rm -rf /var/cache/apk/*
+
+CMD [ "/bin/bash" ]

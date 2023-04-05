@@ -1,4 +1,4 @@
-FROM node:16.19.1-alpine3.16
+FROM node:14.21.2-alpine3.16
 
 ARG JAVA_VERSION=8.352.08.1
 
@@ -20,3 +20,19 @@ ENV LANG C.UTF-8
 ENV JAVA_HOME=/usr/lib/jvm/default-jvm/jre
 
 RUN corepack enable
+
+# add Wine
+ENV WINEDEBUG -all,err+all
+ENV WINEDLLOVERRIDES winemenubuilder.exe=d
+ENV WINEPREFIX /root/wine64
+ENV WINEARCH win64
+ENV DISPLAY :0
+RUN apk add --no-cache wine \
+    # config Wine
+    && winecfg \
+    # create symlink to default wine
+    && ln -sf /usr/bin/wine64 /usr/bin/wine \
+    # smoke test
+    && wine --version \
+    # cleanup
+    && rm -rf /var/cache/apk/*

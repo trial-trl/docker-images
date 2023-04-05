@@ -1,6 +1,10 @@
-FROM nginx:1.23.3-alpine
+FROM plugfox/flutter:3.7.5-android
 
-ENV NODE_VERSION 16.19.1
+ENV PATH="$PATH":"/root/.pub-cache/bin"
+RUN dart pub global activate fvm \
+    && fvm --version
+
+ENV NODE_VERSION 16.20.0
 
 RUN addgroup -g 1000 node \
     && adduser -u 1000 -G node -s /bin/sh -D node \
@@ -12,7 +16,7 @@ RUN addgroup -g 1000 node \
       && case "${alpineArch##*-}" in \
         x86_64) \
           ARCH='x64' \
-          CHECKSUM="f701dbe93da8be3198d3b6a2ba0044c2f5d142b3acabefb7a3ffeb31245b88df" \
+          CHECKSUM="b3f80fe7d0f1af6fe25ffedc7237ca519965d08fc800eab29cf45cd5b90cdb26" \
           ;; \
         *) ;; \
       esac \
@@ -96,4 +100,21 @@ RUN apk add --no-cache --virtual .build-deps-yarn curl gnupg tar \
 
 RUN corepack enable
 
-CMD [ "node", "--version" ]
+# Install Ruby based on https://github.com/DannyBen/docker-alpine-ruby/blob/master/Dockerfile
+ENV BUILD_PACKAGES bash curl curl-dev ruby-dev build-base
+ENV RUBY_PACKAGES \
+  ruby ruby-io-console ruby-irb \
+  ruby-json ruby-etc ruby-bigdecimal ruby-rdoc \
+  libffi-dev zlib-dev
+ENV TERM=linux
+ENV PS1 "\n\n>> ruby \W \$ "
+
+RUN apk --no-cache add $BUILD_PACKAGES $RUBY_PACKAGES
+
+RUN echo 'gem: --no-document' > /etc/gemrc && \
+    gem install bundler
+
+RUN bundle config --global silence_root_warning 1
+
+SHELL [ "/bin/bash", "-c" ]
+CMD [ "flutter", "doctor" ]

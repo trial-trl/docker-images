@@ -1,4 +1,4 @@
-FROM plugfox/flutter:3.7.5-android
+FROM plugfox/flutter:3.19.2-android
 
 ENV PATH="$PATH":"/root/.pub-cache/bin"
 RUN dart pub global activate fvm \

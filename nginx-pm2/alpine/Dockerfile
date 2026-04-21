@@ -1,6 +1,6 @@
-FROM nginx:1.23.3-alpine
+FROM nginx:1.30.0-alpine3.23
 
-ENV NODE_VERSION 16.19.1
+ENV NODE_VERSION 24.15.0
 
 RUN addgroup -g 1000 node \
     && adduser -u 1000 -G node -s /bin/sh -D node \
@@ -12,7 +12,7 @@ RUN addgroup -g 1000 node \
       && case "${alpineArch##*-}" in \
         x86_64) \
           ARCH='x64' \
-          CHECKSUM="f701dbe93da8be3198d3b6a2ba0044c2f5d142b3acabefb7a3ffeb31245b88df" \
+          CHECKSUM="8b75070ed35ef8381548f4396d3cf957fd1449db063f288fe00b0cb64456477f" \
           ;; \
         *) ;; \
       esac \

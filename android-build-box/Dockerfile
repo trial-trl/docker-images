@@ -1,6 +1,6 @@
 FROM alvrme/alpine-android:android-35-jdk17
 
-ENV NODE_VERSION 22.12.0
+ENV NODE_VERSION 24.15.0
 ENV YARN_VERSION 1.22.19
 
 RUN apk add --no-cache xz \
@@ -14,15 +14,15 @@ RUN apk add --no-cache xz \
       && case "${alpineArch##*-}" in \
         x86_64) \
           ARCH='x64' \
-          CHECKSUM="43532120bad06cdea17c2ffba81ebfcff4611532a3569ef996faa39aadcbc759" \
+          CHECKSUM="472655581fb851559730c48763e0c9d3bc25975c59d518003fc0849d3e4ba0f6" \
           ;; \
         *) ;; \
       esac \
   && if [ -n "${CHECKSUM}" ]; then \
     set -eu; \
-    curl -fsSLO --compressed "https://unofficial-builds.nodejs.org/download/release/v$NODE_VERSION/node-v$NODE_VERSION-linux-$ARCH-musl.tar.xz"; \
-    echo "$CHECKSUM  node-v$NODE_VERSION-linux-$ARCH-musl.tar.xz" | sha256sum -c - \
-      && tar -xJf "node-v$NODE_VERSION-linux-$ARCH-musl.tar.xz" -C /usr/local --strip-components=1 --no-same-owner \
+    curl -fsSLO --compressed "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-$ARCH.tar.xz"; \
+    echo "$CHECKSUM  node-v$NODE_VERSION-linux-$ARCH.tar.xz" | sha256sum -c - \
+      && tar -xJf "node-v$NODE_VERSION-linux-$ARCH.tar.xz" -C /usr/local --strip-components=1 --no-same-owner \
       && ln -s /usr/local/bin/node /usr/local/bin/nodejs; \
   else \
     echo "Building from source" \
@@ -64,7 +64,7 @@ RUN apk add --no-cache xz \
     && rm -Rf "node-v$NODE_VERSION" \
     && rm "node-v$NODE_VERSION.tar.xz" SHASUMS256.txt.asc SHASUMS256.txt; \
   fi \
-  && rm -f "node-v$NODE_VERSION-linux-$ARCH-musl.tar.xz" \
+  && rm -f "node-v$NODE_VERSION-linux-$ARCH.tar.xz" \
   && apk del .build-deps \
   # smoke tests
   && node --version \
@@ -93,21 +93,5 @@ RUN apk add --no-cache --virtual .build-deps-yarn curl gnupg tar \
 RUN apk add --no-cache git
 
 RUN corepack enable
-
-# add Wine
-ENV WINEDEBUG -all,err+all
-ENV WINEDLLOVERRIDES winemenubuilder.exe=d
-ENV WINEPREFIX /root/wine64
-ENV WINEARCH win64
-ENV DISPLAY :0
-RUN apk add --no-cache wine \
-    # config Wine
-    && winecfg \
-    # create symlink to default wine
-    && ln -sf /usr/bin/wine64 /usr/bin/wine \
-    # smoke test
-    && wine --version \
-    # cleanup
-    && rm -rf /var/cache/apk/*
 
 CMD [ "/bin/bash" ]

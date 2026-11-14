@@ -1,4 +1,4 @@
-FROM mlsm/node-jre:node22.12.0-jre17-alpine3.21
+FROM mlsm/node-jre:node24.15.0-jre17-alpine3.23
 
 # add Wine
 ENV WINEDEBUG -all,err+all

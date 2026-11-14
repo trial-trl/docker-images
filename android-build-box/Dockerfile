@@ -1,4 +1,4 @@
-FROM alvrme/alpine-android:android-35-jdk17
+FROM alvrme/alpine-android:android-36-jdk17
 
 ENV NODE_VERSION 24.15.0
 ENV YARN_VERSION 1.22.19
